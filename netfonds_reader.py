@@ -54,28 +54,34 @@ def get_exchange_code(sym):
     
 
 def capture_day(sym, meta, _datestr):
+    def send_tick_request():
+        r = requests.get(TICK_BASE_URL, params=GET_ARGS)
+        with open(os.path.join(LAST_DIR, ".".join([sym, "Last", "txt"])), 'a') as flast:
+            for line in r.text.split('\n')[1:-1]:
+                data = line.split("\t")
+                if len(data) >= 3:
+                    flast.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
+
+    def send_quote_request():
+        r = requests.get(QUOTE_BASE_URL, params=GET_ARGS)
+        fask = open(os.path.join(ASK_DIR, ".".join([sym, "Ask", "txt"])), 'a')
+        fbid = open(os.path.join(BID_DIR, ".".join([sym, "Bid", "txt"])), 'a')
+        for line in r.text.split('\n')[1:-1]:
+            data = line.split("\t")
+            if len(data) >= 6:
+                fask.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
+                fbid.write(";".join([data[0].replace("T", " "), data[4], data[5]]) + "\n")
+        fask.close()
+        fbid.close()
+        
     GET_ARGS = {}
     GET_ARGS['date'] = _datestr
     GET_ARGS['paper'] = sym + "." + meta[sym]['code']
     GET_ARGS['csv_format'] = "txt"
 
-    r = requests.get(TICK_BASE_URL, params=GET_ARGS)
-    with open(os.path.join(LAST_DIR, ".".join([sym, "Last", "txt"])), 'a') as flast:
-        for line in r.text.split('\n')[1:-1]:
-            data = line.split("\t")
-            if len(data) >= 3:
-                flast.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
+    send_tick_request()
+    send_quote_request()
 
-    r = requests.get(QUOTE_BASE_URL, params=GET_ARGS)
-    fask = open(os.path.join(ASK_DIR, ".".join([sym, "Ask", "txt"])), 'a')
-    fbid = open(os.path.join(BID_DIR, ".".join([sym, "Bid", "txt"])), 'a')
-    for line in r.text.split('\n')[1:-1]:
-        data = line.split("\t")
-        if len(data) >= 6:
-            fask.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
-            fbid.write(";".join([data[0].replace("T", " "), data[4], data[5]]) + "\n")
-    fask.close()
-    fbid.close()
     meta[sym]['date'] = _datestr
     
     
