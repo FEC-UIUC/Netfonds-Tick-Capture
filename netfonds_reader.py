@@ -54,8 +54,13 @@ def get_exchange_code(sym):
     
 
 def capture_day(sym, meta, _datestr):
+    request_args = {
+        'date': _datestr,
+        'paper': sym + "." + meta[sym]['code'],
+        'csv_format': 'txt'
+    }
     def send_tick_request():
-        r = requests.get(TICK_BASE_URL, params=GET_ARGS)
+        r = requests.get(TICK_BASE_URL, params=request_args)
         with open(os.path.join(LAST_DIR, ".".join([sym, "Last", "txt"])), 'a') as flast:
             for line in r.text.split('\n')[1:-1]:
                 data = line.split("\t")
@@ -63,7 +68,7 @@ def capture_day(sym, meta, _datestr):
                     flast.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
 
     def send_quote_request():
-        r = requests.get(QUOTE_BASE_URL, params=GET_ARGS)
+        r = requests.get(QUOTE_BASE_URL, params= request_args)
         fask = open(os.path.join(ASK_DIR, ".".join([sym, "Ask", "txt"])), 'a')
         fbid = open(os.path.join(BID_DIR, ".".join([sym, "Bid", "txt"])), 'a')
         for line in r.text.split('\n')[1:-1]:
@@ -73,11 +78,6 @@ def capture_day(sym, meta, _datestr):
                 fbid.write(";".join([data[0].replace("T", " "), data[4], data[5]]) + "\n")
         fask.close()
         fbid.close()
-
-    GET_ARGS = {}
-    GET_ARGS['date'] = _datestr
-    GET_ARGS['paper'] = sym + "." + meta[sym]['code']
-    GET_ARGS['csv_format'] = "txt"
 
     send_tick_request()
     send_quote_request()
