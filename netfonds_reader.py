@@ -103,13 +103,10 @@ def capture_sym(sym, meta):
 
 def main():
     make_dirs()
-
     with open(SYMBOLS_FILE) as f:
         syms = f.read().split('\n')
-
     with open(META_FILE) as f:
         meta = json.loads(f.read())
-
     for sym in syms:
         capture_sym(sym, meta)
         print sym + "." + meta[sym]['code'] + " - " + _datestr
