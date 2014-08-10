@@ -73,7 +73,7 @@ def capture_day(sym, meta, _datestr):
                 fbid.write(";".join([data[0].replace("T", " "), data[4], data[5]]) + "\n")
         fask.close()
         fbid.close()
-        
+
     GET_ARGS = {}
     GET_ARGS['date'] = _datestr
     GET_ARGS['paper'] = sym + "." + meta[sym]['code']
@@ -105,6 +105,7 @@ def capture_sym(sym, meta):
     for n in xrange(0, days):
         _datestr = (sym_start_date + datetime.timedelta(n)).strftime("%Y%m%d")
         capture_day(sym, meta, _datestr)
+        print sym + "." + meta[sym]['code'] + " - " + _datestr
 
 
 def main():
@@ -115,7 +116,6 @@ def main():
         meta = json.loads(f.read())
     for sym in syms:
         capture_sym(sym, meta)
-        print sym + "." + meta[sym]['code'] + " - " + _datestr
         with open(META_FILE, 'w') as f:
             f.write(json.dumps(meta))
 
