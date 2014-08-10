@@ -9,7 +9,7 @@ LAST_DIR = os.path.join(BASE_DATA_DIR, "last")
 BID_DIR = os.path.join(BASE_DATA_DIR, "bid")
 ASK_DIR = os.path.join(BASE_DATA_DIR, "ask")
 SYMBOLS_FILE = os.path.join(BASE_DIR, "symbols.txt")
-META_FILE = os.path.join(BASE_DIR, "meta.json")
+META_FILE = os.path.join(BASE_DATA_DIR, "meta.json")
 
 TICK_BASE_URL = "http://hopey.netfonds.no/tradedump.php"
 QUOTE_BASE_URL = "http://hopey.netfonds.no/posdump.php"
