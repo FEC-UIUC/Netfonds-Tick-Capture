@@ -3,8 +3,8 @@ import requests
 import os
 import json
 
-BASE_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)))
-BASE_DATA_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+BASE_DATA_DIR = os.path.join(BASE_DIR, "data")
 LAST_DIR = os.path.join(BASE_DATA_DIR, "last")
 BID_DIR = os.path.join(BASE_DATA_DIR, "bid")
 ASK_DIR = os.path.join(BASE_DATA_DIR, "ask")
@@ -57,18 +57,17 @@ def get_exchange_code(sym):
         r = send_netfonds_request(c)
         if valid_netfonds_response(r):
             return c
-
     return "X"
 
 
 def send_tick_request(sym, request_args):
-        r = requests.get(TICK_BASE_URL, params=request_args)
-        flast = open(os.path.join(LAST_DIR, ".".join([sym, "Last", "txt"])))
-        for line in r.text.split('\n')[1:-1]:
-            data = line.split("\t")
-            if len(data) >= 3:
-                flast.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
-        flast.close()
+    r = requests.get(TICK_BASE_URL, params=request_args)
+    flast = open(os.path.join(LAST_DIR, ".".join([sym, "Last", "txt"])))
+    for line in r.text.split('\n')[1:-1]:
+        data = line.split("\t")
+        if len(data) >= 3:
+            flast.write(";".join([data[0].replace("T", " "), data[1], data[2]]) + "\n")
+    flast.close()
 
 
 def send_quote_request(sym, request_args):
